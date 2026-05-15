@@ -1,0 +1,9 @@
+Starting project at C:\Users\nome_do_usuario\Desktop\loto-master-app-master
+Starting Metro Bundler
+The following packages should be updated for best compatibility with the installed expo version:
+  expo@54.0.33 - expected version: ~54.0.34
+  expo-updates@29.0.16 - expected version: ~29.0.17
+  react-native-screens@4.23.0 - expected version: ~4.16.0
+Your project may not work correctly until you install the expected versions of the packages.
+Waiting on http://localhost:8081
+Logs for your project will appear below.
