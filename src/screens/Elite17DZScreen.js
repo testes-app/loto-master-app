@@ -1,4 +1,4 @@
-// Elite17DZScreen.js — versão corrigida
+// Elite17DZScreen.js — versão dinâmica completa
 // src/screens/Elite17DZScreen.js
 
 import { useState, useEffect } from "react";
@@ -12,13 +12,7 @@ const { width: SW } = Dimensions.get("window");
 const BALL_SIZE = 11;
 
 const CORNELIO_DZ = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14, 15, 20, 23, 24, 25];
-
-const CORNELIO_DZ_SET = new Set(CORNELIO_DZ);
-
-// Ranks padrão (atualizado dinamicamente)
-const RANKS_PADRAO = {
-    "15": "#1", "14": "#26.551", "13": "#423.043", "12": "#2.627", "11": "#423.405"
-};
+const CORNELIO_DZ_KEY = JSON.stringify(CORNELIO_DZ);
 
 const CATS = {
     "15": { label: "TOP =15 ACERTOS", icon: "🏆", color: "#ffd700" },
@@ -27,46 +21,6 @@ const CATS = {
     "12": { label: "TOP =12 ACERTOS", icon: "🔮", color: "#b06df0" },
     "11": { label: "TOP =11 ACERTOS", icon: "🔥", color: "#ff9500" },
 };
-
-const TOPS = {
-    "15": [
-        { pos: 1, e15: 5, e14: 2, e13: 78, e12: 351, e11: 1014, dz: [1, 2, 3, 5, 7, 8, 9, 11, 12, 14, 15, 16, 18, 20, 21, 23, 25], a15: 1385, a14: 1305, a13: 3, a12: 1, a11: 4, corn: false },
-        { pos: 2, e15: 4, e14: 11, e13: 77, e12: 454, e11: 984, dz: [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14, 15, 20, 23, 24, 25], a15: 301, a14: 6, a13: 125, a12: 12, a11: 0, corn: true },
-        { pos: 3, e15: 4, e14: 8, e13: 95, e12: 406, e11: 1050, dz: [1, 2, 3, 6, 9, 10, 11, 12, 13, 14, 15, 18, 19, 20, 22, 24, 25], a15: 366, a14: 276, a13: 46, a12: 7, a11: 0, corn: false },
-        { pos: 4, e15: 4, e14: 8, e13: 72, e12: 438, e11: 943, dz: [1, 2, 5, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 25], a15: 823, a14: 713, a13: 87, a12: 3, a11: 0, corn: false },
-        { pos: 5, e15: 4, e14: 6, e13: 96, e12: 391, e11: 1023, dz: [1, 2, 3, 4, 6, 9, 10, 11, 12, 13, 16, 18, 19, 20, 22, 23, 25], a15: 271, a14: 227, a13: 19, a12: 0, a11: 6, corn: false },
-    ],
-    "14": [
-        { pos: 1, e15: 0, e14: 22, e13: 72, e12: 387, e11: 948, dz: [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19, 20, 21, 22, 24, 25], a15: null, a14: 430, a13: 47, a12: 1, a11: 6, corn: false },
-        { pos: 2, e15: 0, e14: 21, e13: 88, e12: 399, e11: 994, dz: [1, 2, 3, 4, 6, 9, 10, 12, 13, 14, 15, 17, 19, 22, 23, 24, 25], a15: null, a14: 101, a13: 21, a12: 7, a11: 9, corn: false },
-        { pos: 3, e15: 0, e14: 21, e13: 71, e12: 383, e11: 1010, dz: [1, 2, 4, 5, 7, 10, 11, 12, 14, 15, 16, 17, 19, 20, 21, 23, 25], a15: null, a14: 87, a13: 3, a12: 18, a11: 1, corn: false },
-        { pos: 4, e15: 0, e14: 21, e13: 64, e12: 406, e11: 1002, dz: [1, 2, 3, 4, 6, 9, 10, 11, 12, 13, 15, 16, 17, 18, 20, 22, 25], a15: null, a14: 199, a13: 48, a12: 11, a11: 0, corn: false },
-        { pos: 5, e15: 1, e14: 20, e13: 91, e12: 412, e11: 945, dz: [1, 2, 3, 4, 6, 9, 12, 13, 14, 15, 17, 18, 19, 20, 22, 24, 25], a15: 3332, a14: 172, a13: 48, a12: 21, a11: 7, corn: false },
-    ],
-    "13": [
-        { pos: 1, e15: 0, e14: 6, e13: 124, e12: 414, e11: 1002, dz: [1, 3, 4, 6, 9, 10, 11, 12, 13, 15, 17, 18, 19, 20, 21, 24, 25], a15: null, a14: 121, a13: 0, a12: 11, a11: 2, corn: false },
-        { pos: 2, e15: 0, e14: 7, e13: 123, e12: 406, e11: 958, dz: [1, 2, 3, 4, 6, 9, 10, 11, 12, 13, 17, 18, 20, 21, 23, 24, 25], a15: null, a14: 665, a13: 0, a12: 2, a11: 5, corn: false },
-        { pos: 3, e15: 0, e14: 5, e13: 123, e12: 421, e11: 985, dz: [1, 2, 5, 7, 8, 10, 11, 12, 13, 14, 15, 18, 20, 22, 23, 24, 25], a15: null, a14: 1104, a13: 24, a12: 5, a11: 1, corn: false },
-        { pos: 4, e15: 0, e14: 6, e13: 120, e12: 393, e11: 962, dz: [1, 5, 7, 8, 10, 11, 12, 13, 14, 17, 18, 19, 20, 21, 22, 24, 25], a15: null, a14: 406, a13: 51, a12: 2, a11: 0, corn: false },
-        { pos: 5, e15: 0, e14: 4, e13: 120, e12: 387, e11: 983, dz: [2, 3, 4, 6, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 24, 25], a15: null, a14: 1518, a13: 35, a12: 28, a11: 0, corn: false },
-    ],
-    "12": [
-        { pos: 1, e15: 0, e14: 8, e13: 64, e12: 494, e11: 965, dz: [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 17, 18, 20, 22, 24, 25], a15: null, a14: 113, a13: 26, a12: 2, a11: 0, corn: false },
-        { pos: 2, e15: 0, e14: 4, e13: 77, e12: 491, e11: 981, dz: [1, 4, 5, 9, 10, 11, 12, 13, 15, 17, 18, 19, 20, 21, 22, 24, 25], a15: null, a14: 906, a13: 2, a12: 0, a11: 3, corn: false },
-        { pos: 3, e15: 0, e14: 10, e13: 64, e12: 489, e11: 978, dz: [1, 3, 4, 5, 6, 9, 10, 11, 13, 14, 15, 17, 18, 19, 20, 21, 25], a15: null, a14: 604, a13: 0, a12: 13, a11: 6, corn: false },
-        { pos: 4, e15: 0, e14: 4, e13: 86, e12: 488, e11: 960, dz: [1, 3, 4, 6, 9, 10, 11, 12, 13, 14, 17, 19, 20, 21, 22, 24, 25], a15: null, a14: 335, a13: 21, a12: 0, a11: 2, corn: false },
-        { pos: 5, e15: 0, e14: 8, e13: 76, e12: 487, e11: 954, dz: [1, 2, 4, 5, 6, 9, 10, 12, 13, 14, 15, 17, 19, 20, 21, 24, 25], a15: null, a14: 202, a13: 81, a12: 21, a11: 0, corn: false },
-    ],
-    "11": [
-        { pos: 1, e15: 0, e14: 7, e13: 75, e12: 421, e11: 1128, dz: [1, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18, 20, 21, 22, 24, 25], a15: null, a14: 219, a13: 35, a12: 2, a11: 0, corn: false },
-        { pos: 2, e15: 0, e14: 10, e13: 70, e12: 385, e11: 1128, dz: [1, 4, 5, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 23, 25], a15: null, a14: 185, a13: 22, a12: 0, a11: 2, corn: false },
-        { pos: 3, e15: 0, e14: 6, e13: 84, e12: 371, e11: 1122, dz: [1, 4, 7, 9, 10, 11, 13, 14, 15, 17, 18, 19, 20, 22, 23, 24, 25], a15: null, a14: 282, a13: 40, a12: 27, a11: 2, corn: false },
-        { pos: 4, e15: 0, e14: 4, e13: 81, e12: 390, e11: 1116, dz: [4, 6, 7, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 24, 25], a15: null, a14: 1620, a13: 28, a12: 44, a11: 2, corn: false },
-        { pos: 5, e15: 0, e14: 0, e13: 89, e12: 354, e11: 1114, dz: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 19, 20, 21, 24], a15: null, a14: null, a13: 85, a12: 0, a11: 4, corn: false },
-    ],
-};
-
-// O objeto CORNELIO_RANKS agora é dinâmico (ranks) no componente
 
 function atColor(val) {
     if (val === null || val === undefined || val >= 9999) return "#2a3f55";
@@ -83,10 +37,9 @@ function atLabel(val) {
 }
 
 function Ball({ num, active, color, size }) {
-    const activeStyle = { backgroundColor: color + "33" };
-    const inactiveStyle = { backgroundColor: "transparent" };
     return (
-        <View style={[st.ball, { width: size, height: size }, active ? activeStyle : inactiveStyle]}>
+        <View style={[st.ball, { width: size, height: size },
+        active ? { backgroundColor: color + "33" } : { backgroundColor: "transparent" }]}>
             <Text style={[st.ballText, { fontSize: size * 0.72, color: active ? color : "#2a3f55" }]}>
                 {num}
             </Text>
@@ -114,34 +67,43 @@ function BallRow({ dz, color, size }) {
     );
 }
 
-function GameCard({ game, color, rank }) {
+function GameCard({ item, color, rank, isMine }) {
     const rankColors = ["#ffd700", "#c0c0c0", "#cd7f32", "#4a5568", "#4a5568"];
-    const cardStyle = game.corn
+    const cardStyle = isMine
         ? [st.gameCard, { borderColor: "#ffd700", borderWidth: 1.5 }]
         : [st.gameCard];
 
+    const c = item.counts || {};
+    const e15 = c["15"] || 0;
+    const e14 = c["14"] || 0;
+    const e13 = c["13"] || 0;
+    const e12 = c["12"] || 0;
+    const e11 = c["11"] || 0;
+    const atraso = item.atraso ?? null;
+
     return (
         <View style={cardStyle}>
-            {game.corn ? <Text style={st.cornBadge}>★ SEU JOGO</Text> : null}
+            {isMine ? <Text style={st.cornBadge}>★ SEU JOGO</Text> : null}
             <View style={st.gameTop}>
                 <Text style={[st.rankNum, { color: rankColors[rank - 1] || "#4a5568" }]}>#{rank}</Text>
-                <BallRow dz={game.dz} color={color} size={BALL_SIZE} />
+                <BallRow dz={item.dezenas} color={color} size={BALL_SIZE} />
             </View>
             <View style={st.scoresRow}>
-                <ScoreCell label="=15" val={game.e15} atraso={game.a15} color="#ffd700" />
-                <ScoreCell label="=14" val={game.e14} atraso={game.a14} color="#00e07a" />
-                <ScoreCell label="=13" val={game.e13} atraso={game.a13} color="#00c8ff" />
-                <ScoreCell label="=12" val={game.e12} atraso={game.a12} color="#b06df0" />
-                <ScoreCell label="=11" val={game.e11} atraso={game.a11} color="#ff9500" />
+                <ScoreCell label="=15" val={e15} atraso={e15 > 0 ? atraso : null} color="#ffd700" />
+                <ScoreCell label="=14" val={e14} atraso={e14 > 0 ? atraso : null} color="#00e07a" />
+                <ScoreCell label="=13" val={e13} atraso={atraso} color="#00c8ff" />
+                <ScoreCell label="=12" val={e12} atraso={atraso} color="#b06df0" />
+                <ScoreCell label="=11" val={e11} atraso={atraso} color="#ff9500" />
             </View>
         </View>
     );
 }
 
-function Section({ catKey }) {
+function Section({ catKey, topsByCat, cornelioDzKey }) {
     const [open, setOpen] = useState(catKey === "15");
     const cat = CATS[catKey];
-    const games = TOPS[catKey];
+    const games = topsByCat[catKey] || [];
+
     const headerStyle = open
         ? [st.sectionHeader, { borderColor: cat.color }]
         : [st.sectionHeader];
@@ -164,23 +126,44 @@ function Section({ catKey }) {
 
             {open ? (
                 <View style={[st.sectionBody, { borderColor: cat.color }]}>
-                    {games.map((g, i) => (
-                        <GameCard key={i} game={g} color={cat.color} rank={g.pos} />
-                    ))}
+                    {games.length === 0
+                        ? <Text style={{ color: "#4a5568", fontFamily: "monospace", fontSize: 10, padding: 10 }}>Carregando...</Text>
+                        : games.map((g, i) => (
+                            <GameCard
+                                key={i}
+                                item={g}
+                                color={cat.color}
+                                rank={i + 1}
+                                isMine={JSON.stringify(g.dezenas) === cornelioDzKey}
+                            />
+                        ))
+                    }
                 </View>
             ) : null}
         </View>
     );
 }
 
-export default function Elite17DZScreen() {
-    const [concurso, setConcurso] = useState(3685);
-    const [meuJogo, setMeuJogo] = useState({
-        e15: 4, e14: 11, e13: 77, e12: 454, e11: 984,
-        a15: 301, a14: 6, a13: 125, a12: 12, a11: 0
+// Gera top-5 por categoria a partir do array bruto do JSON
+function calcTopsByCat(dados) {
+    const tops = {};
+    ["15", "14", "13", "12", "11"].forEach(cat => {
+        const sorted = [...dados].sort((a, b) =>
+            (b.counts[cat] || 0) - (a.counts[cat] || 0)
+        );
+        tops[cat] = sorted.slice(0, 5);
     });
-    const [ranks, setRanks] = useState(RANKS_PADRAO);
-    const [loading, setLoading] = useState(false);
+    return tops;
+}
+
+export default function Elite17DZScreen() {
+    const [concurso, setConcurso] = useState(null);
+    const [meuJogo, setMeuJogo] = useState(null);
+    const [ranks, setRanks] = useState({});
+    const [topsByCat, setTopsByCat] = useState({});
+    const [totalCombinacoes] = useState("1.081.575");
+    const [loading, setLoading] = useState(true);
+    const [erro, setErro] = useState(null);
 
     useEffect(() => {
         atualizarDados();
@@ -188,20 +171,31 @@ export default function Elite17DZScreen() {
 
     async function atualizarDados() {
         setLoading(true);
+        setErro(null);
         try {
-            // Buscar último concurso
+            // 1. Buscar último concurso
             const resultados = await LotofacilAPI.buscarUltimosResultados(1);
-            if (!resultados || resultados.length === 0) return;
+            if (!resultados || resultados.length === 0) {
+                setErro("Sem conexão com a API da Caixa.");
+                return;
+            }
             const ultimoConcurso = resultados[0].concurso;
             setConcurso(ultimoConcurso);
 
-            // Buscar JSON do ranking 17dz
+            // 2. Buscar JSON do ranking 17dz
             const dados = await LotofacilAPI.fetchRemoteRankings(ultimoConcurso, 17);
-            if (!dados) return;
+            if (!dados || dados.length === 0) {
+                setErro(`Ranking não encontrado para o concurso ${ultimoConcurso}.`);
+                return;
+            }
 
-            // Achar o jogo do Cornélio
+            // 3. Calcular tops por categoria
+            const tops = calcTopsByCat(dados);
+            setTopsByCat(tops);
+
+            // 4. Achar o jogo do Cornélio
             const meuJogoData = dados.find(item =>
-                JSON.stringify(item.dezenas) === JSON.stringify(CORNELIO_DZ)
+                JSON.stringify(item.dezenas) === CORNELIO_DZ_KEY
             );
 
             if (meuJogoData) {
@@ -211,21 +205,17 @@ export default function Elite17DZScreen() {
                     e13: meuJogoData.counts["13"] || 0,
                     e12: meuJogoData.counts["12"] || 0,
                     e11: meuJogoData.counts["11"] || 0,
-                    a15: meuJogoData.atraso,
-                    a14: meuJogoData.atraso,
-                    a13: meuJogoData.atraso,
-                    a12: meuJogoData.atraso,
-                    a11: meuJogoData.atraso,
+                    atraso: meuJogoData.atraso ?? 0,
                 });
 
-                // Calcular rank por categoria
+                // 5. Calcular rank por categoria
                 const novosRanks = {};
                 ["15", "14", "13", "12", "11"].forEach(cat => {
                     const sorted = [...dados].sort((a, b) =>
                         (b.counts[cat] || 0) - (a.counts[cat] || 0)
                     );
                     const pos = sorted.findIndex(item =>
-                        JSON.stringify(item.dezenas) === JSON.stringify(CORNELIO_DZ)
+                        JSON.stringify(item.dezenas) === CORNELIO_DZ_KEY
                     );
                     novosRanks[cat] = pos >= 0 ? `#${pos + 1}` : "?";
                 });
@@ -233,6 +223,7 @@ export default function Elite17DZScreen() {
             }
         } catch (e) {
             console.log("Erro ao atualizar Elite17DZ:", e);
+            setErro("Erro ao carregar dados.");
         } finally {
             setLoading(false);
         }
@@ -246,9 +237,14 @@ export default function Elite17DZScreen() {
                 <View style={st.header}>
                     <Text style={st.headerTitle}>ELITE 17DZ</Text>
                     <Text style={st.headerSub}>RANKINGS SUPREMOS</Text>
-                    <Text style={st.headerMeta}>1.081.575 combinações · {concurso} concursos</Text>
-                    <Text style={st.headerLast}>{`▶ ÚLTIMO: #${concurso} · Atraso = concursos sem aquele score`}</Text>
+                    <Text style={st.headerMeta}>
+                        {totalCombinacoes} combinações · {concurso ? `${concurso} concursos` : "carregando..."}
+                    </Text>
+                    {concurso
+                        ? <Text style={st.headerLast}>{`▶ ÚLTIMO: #${concurso} · Atraso = concursos sem aquele score`}</Text>
+                        : null}
                     {loading ? <ActivityIndicator color="#00c8ff" style={{ marginTop: 6 }} /> : null}
+                    {erro ? <Text style={{ color: "#ff4466", fontSize: 9, fontFamily: "monospace", marginTop: 6 }}>{erro}</Text> : null}
                 </View>
 
                 <View style={st.legend}>
@@ -269,25 +265,35 @@ export default function Elite17DZScreen() {
                         <View style={st.cornelioBadge}><Text style={st.cornelioBadgeText}>17DZ</Text></View>
                     </View>
                     <BallRow dz={CORNELIO_DZ} color="#ffd700" size={11} />
-                    <View style={[st.scoresRow, { marginTop: 10 }]}>
-                        <ScoreCell label="=15" val={meuJogo.e15} atraso={meuJogo.a15} color="#ffd700" />
-                        <ScoreCell label="=14" val={meuJogo.e14} atraso={meuJogo.a14} color="#00e07a" />
-                        <ScoreCell label="=13" val={meuJogo.e13} atraso={meuJogo.a13} color="#00c8ff" />
-                        <ScoreCell label="=12" val={meuJogo.e12} atraso={meuJogo.a12} color="#b06df0" />
-                        <ScoreCell label="=11" val={meuJogo.e11} atraso={meuJogo.a11} color="#ff9500" />
-                    </View>
-                    <View style={st.ranksRow}>
-                        {Object.entries(ranks).map(([cat, rank]) => (
-                            <View key={cat} style={[st.rankChip, { borderColor: CATS[cat].color }]}>
-                                <Text style={[st.rankChipText, { color: CATS[cat].color }]}>{rank} rank ={cat}</Text>
+                    {meuJogo ? (
+                        <>
+                            <View style={[st.scoresRow, { marginTop: 10 }]}>
+                                <ScoreCell label="=15" val={meuJogo.e15} atraso={meuJogo.e15 > 0 ? meuJogo.atraso : null} color="#ffd700" />
+                                <ScoreCell label="=14" val={meuJogo.e14} atraso={meuJogo.e14 > 0 ? meuJogo.atraso : null} color="#00e07a" />
+                                <ScoreCell label="=13" val={meuJogo.e13} atraso={meuJogo.atraso} color="#00c8ff" />
+                                <ScoreCell label="=12" val={meuJogo.e12} atraso={meuJogo.atraso} color="#b06df0" />
+                                <ScoreCell label="=11" val={meuJogo.e11} atraso={meuJogo.atraso} color="#ff9500" />
                             </View>
-                        ))}
-                    </View>
+                            <View style={st.ranksRow}>
+                                {Object.entries(ranks).map(([cat, rank]) => (
+                                    <View key={cat} style={[st.rankChip, { borderColor: CATS[cat].color }]}>
+                                        <Text style={[st.rankChipText, { color: CATS[cat].color }]}>{rank} rank ={cat}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </>
+                    ) : (
+                        <Text style={{ color: "#4a5568", fontSize: 9, fontFamily: "monospace", marginTop: 10 }}>
+                            {loading ? "Carregando..." : "Jogo não encontrado no ranking."}
+                        </Text>
+                    )}
                 </View>
 
-                {Object.keys(CATS).map(k => <Section key={k} catKey={k} />)}
+                {Object.keys(CATS).map(k => (
+                    <Section key={k} catKey={k} topsByCat={topsByCat} cornelioDzKey={CORNELIO_DZ_KEY} />
+                ))}
 
-                <Text style={st.footer}>{`Lotofácil Concursos 1–${concurso} · LotoMatrix Elite 17DZ`}</Text>
+                <Text style={st.footer}>{`Lotofácil Concursos 1–${concurso || "?"} · LotoMatrix Elite 17DZ`}</Text>
             </ScrollView>
         </View>
     );
