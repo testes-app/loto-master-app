@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import {
     View, Text, ScrollView, TouchableOpacity,
-    StyleSheet, Dimensions, StatusBar, ActivityIndicator,
+    StyleSheet, Dimensions, StatusBar, ActivityIndicator, Alert,
 } from "react-native";
 import LotofacilAPI from "../services/LotofacilAPI";
 
@@ -79,7 +79,7 @@ function GameCard({ item, color, rank, isMine }) {
     const e13 = c["13"] || 0;
     const e12 = c["12"] || 0;
     const e11 = c["11"] || 0;
-    const atraso = item.atraso ?? null;
+    const ats = item.atrasos || {};
 
     return (
         <View style={cardStyle}>
@@ -89,11 +89,11 @@ function GameCard({ item, color, rank, isMine }) {
                 <BallRow dz={item.dezenas} color={color} size={BALL_SIZE} />
             </View>
             <View style={st.scoresRow}>
-                <ScoreCell label="=15" val={e15} atraso={e15 > 0 ? atraso : null} color="#ffd700" />
-                <ScoreCell label="=14" val={e14} atraso={e14 > 0 ? atraso : null} color="#00e07a" />
-                <ScoreCell label="=13" val={e13} atraso={atraso} color="#00c8ff" />
-                <ScoreCell label="=12" val={e12} atraso={atraso} color="#b06df0" />
-                <ScoreCell label="=11" val={e11} atraso={atraso} color="#ff9500" />
+                <ScoreCell label="=15" val={e15} atraso={ats["15"] ?? null} color="#ffd700" />
+                <ScoreCell label="=14" val={e14} atraso={ats["14"] ?? null} color="#00e07a" />
+                <ScoreCell label="=13" val={e13} atraso={ats["13"] ?? null} color="#00c8ff" />
+                <ScoreCell label="=12" val={e12} atraso={ats["12"] ?? null} color="#b06df0" />
+                <ScoreCell label="=11" val={e11} atraso={ats["11"] ?? null} color="#ff9500" />
             </View>
         </View>
     );
@@ -169,6 +169,11 @@ export default function Elite17DZScreen() {
         atualizarDados();
     }, []);
 
+    async function forcarAtualizacao() {
+        await LotofacilAPI.clearRankingsCache();
+        await atualizarDados();
+    }
+
     async function atualizarDados() {
         setLoading(true);
         setErro(null);
@@ -206,6 +211,7 @@ export default function Elite17DZScreen() {
                     e12: meuJogoData.counts["12"] || 0,
                     e11: meuJogoData.counts["11"] || 0,
                     atraso: meuJogoData.atraso ?? 0,
+                    atrasos: meuJogoData.atrasos || {},
                 });
 
                 // 5. Calcular rank por categoria
@@ -244,6 +250,14 @@ export default function Elite17DZScreen() {
                         ? <Text style={st.headerLast}>{`▶ ÚLTIMO: #${concurso} · Atraso = concursos sem aquele score`}</Text>
                         : null}
                     {loading ? <ActivityIndicator color="#00c8ff" style={{ marginTop: 6 }} /> : null}
+                    <TouchableOpacity
+                        onPress={forcarAtualizacao}
+                        style={{ marginTop: 8, borderWidth: 1, borderColor: "#00c8ff", borderRadius: 6, paddingHorizontal: 14, paddingVertical: 4 }}
+                    >
+                        <Text style={{ color: "#00c8ff", fontSize: 9, fontFamily: "monospace" }}>
+                            ↺ FORÇAR ATUALIZAÇÃO
+                        </Text>
+                    </TouchableOpacity>
                     {erro ? <Text style={{ color: "#ff4466", fontSize: 9, fontFamily: "monospace", marginTop: 6 }}>{erro}</Text> : null}
                 </View>
 
@@ -268,11 +282,11 @@ export default function Elite17DZScreen() {
                     {meuJogo ? (
                         <>
                             <View style={[st.scoresRow, { marginTop: 10 }]}>
-                                <ScoreCell label="=15" val={meuJogo.e15} atraso={meuJogo.e15 > 0 ? meuJogo.atraso : null} color="#ffd700" />
-                                <ScoreCell label="=14" val={meuJogo.e14} atraso={meuJogo.e14 > 0 ? meuJogo.atraso : null} color="#00e07a" />
-                                <ScoreCell label="=13" val={meuJogo.e13} atraso={meuJogo.atraso} color="#00c8ff" />
-                                <ScoreCell label="=12" val={meuJogo.e12} atraso={meuJogo.atraso} color="#b06df0" />
-                                <ScoreCell label="=11" val={meuJogo.e11} atraso={meuJogo.atraso} color="#ff9500" />
+                                <ScoreCell label="=15" val={meuJogo.e15} atraso={meuJogo.atrasos?.["15"] ?? null} color="#ffd700" />
+                                <ScoreCell label="=14" val={meuJogo.e14} atraso={meuJogo.atrasos?.["14"] ?? null} color="#00e07a" />
+                                <ScoreCell label="=13" val={meuJogo.e13} atraso={meuJogo.atrasos?.["13"] ?? null} color="#00c8ff" />
+                                <ScoreCell label="=12" val={meuJogo.e12} atraso={meuJogo.atrasos?.["12"] ?? null} color="#b06df0" />
+                                <ScoreCell label="=11" val={meuJogo.e11} atraso={meuJogo.atrasos?.["11"] ?? null} color="#ff9500" />
                             </View>
                             <View style={st.ranksRow}>
                                 {Object.entries(ranks).map(([cat, rank]) => (

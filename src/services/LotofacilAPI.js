@@ -151,38 +151,42 @@ const LotofacilAPI = {
   },
 
   async fetchRemoteRankings(contest, dezenas) {
-    // A chave inclui o número do concurso para que caches de concursos
-    // anteriores NÃO sejam reutilizados quando há dados mais recentes.
-    const cacheKey = `ranking_v2_${dezenas}_${contest}`;
-    try {
-      // 1. Verificar cache apenas se for do concurso atual
-      const cached = await AsyncStorage.getItem(cacheKey);
-      if (cached) {
-        console.log(`Cache válido para ${dezenas}dez / concurso ${contest}`);
-        return JSON.parse(cached);
+    // Tenta o concurso atual, se falhar tenta o anterior
+    const concursosParaTentar = [contest, contest - 1, contest - 2];
+
+    for (const num of concursosParaTentar) {
+      const cacheKey = `ranking_v2_${dezenas}_${num}`;
+      try {
+        // Verificar cache
+        const cached = await AsyncStorage.getItem(cacheKey);
+        if (cached) {
+          console.log(`Cache válido para ${dezenas}dez / concurso ${num}`);
+          return JSON.parse(cached);
+        }
+
+        // Buscar no GitHub
+        const url = `https://raw.githubusercontent.com/testes-app/loto-master-app/master/src/data/resultados/top10_${dezenas}dezenas_${num}concursos.json`;
+        console.log(`Buscando remoto: ${url}`);
+
+        const response = await axios.get(url, { timeout: 10000 });
+
+        if (response.data && Array.isArray(response.data)) {
+          const formatados = response.data.map(item => ({
+            score: item.score,
+            counts: item.counts,
+            dezenas: item.dezenas,
+            atraso: item.atraso || 0
+          }));
+          await AsyncStorage.setItem(cacheKey, JSON.stringify(formatados));
+          console.log(`Ranking encontrado no concurso ${num}`);
+          return formatados;
+        }
+      } catch (error) {
+        console.log(`Concurso ${num} não encontrado, tentando anterior...`);
       }
-
-      // 2. Buscar no GitHub Raw
-      const url = `https://raw.githubusercontent.com/testes-app/loto-master-app/master/src/data/resultados/top10_${dezenas}dezenas_${contest}concursos.json`;
-      console.log(`Buscando remoto: ${url}`);
-
-      const response = await axios.get(url, { timeout: 10000 });
-
-      if (response.data && Array.isArray(response.data)) {
-        const formatados = response.data.map(item => ({
-          score: item.score,
-          counts: item.counts,
-          dezenas: item.dezenas,
-          atraso: item.atraso || 0
-        }));
-
-        // Salvar com chave versionada pelo concurso
-        await AsyncStorage.setItem(cacheKey, JSON.stringify(formatados));
-        return formatados;
-      }
-    } catch (error) {
-      console.log(`Erro ao buscar ${dezenas}dez para concurso ${contest}:`, error.message);
     }
+
+    console.log(`Nenhum ranking encontrado para ${dezenas}dez`);
     return null;
   },
 

@@ -126,24 +126,26 @@ def atualizar_cache():
 
 # ─── 2. Geração de rankings ───────────────────────────────────────────────────
 def calcular_score_e_atraso(jogo_set, concursos_sorted):
-    """Calcula score ponderado e atraso de um jogo."""
+    """Calcula score ponderado e atraso de um jogo por categoria."""
     ct = {11: 0, 12: 0, 13: 0, 14: 0, 15: 0}
-    atraso = 0
-    achou_ultimo = False
+    atraso_por_cat = {11: None, 12: None, 13: None, 14: None, 15: None}
 
     for i, (_, _, dezenas) in enumerate(concursos_sorted):
         acertos = len(jogo_set & dezenas)
         if acertos >= 11:
             ct[acertos] += 1
-            if not achou_ultimo:
-                atraso = i  # quantos sorteios desde o último 11+
-                achou_ultimo = True
+            # Registra atraso de cada categoria individualmente
+            for cat in range(11, acertos + 1):
+                if atraso_por_cat[cat] is None:
+                    atraso_por_cat[cat] = i
 
-    if not achou_ultimo:
-        atraso = len(concursos_sorted)
+    # Converter None para 9999 (nunca aconteceu)
+    atraso_final = {}
+    for cat in [11, 12, 13, 14, 15]:
+        atraso_final[cat] = atraso_por_cat[cat] if atraso_por_cat[cat] is not None else 9999
 
     score = sum(ct[f] * PESOS[f] for f in PESOS)
-    return score, ct, atraso
+    return score, ct, atraso_final
 
 def gerar_ranking(concursos, tamanho):
     """Gera o top-N ranking para jogos de `tamanho` dezenas."""
@@ -194,12 +196,13 @@ def gerar_ranking(concursos, tamanho):
     for item in ranking_anterior:
         jogo_set = frozenset(item["dezenas"])
         # Score e atraso completo com todos os concursos
-        score, ct, atraso = calcular_score_e_atraso(jogo_set, concursos_frozenset)
+        score, ct, atrasos_dict = calcular_score_e_atraso(jogo_set, concursos_frozenset)
         resultados_atualizados.append({
             "score": score,
             "counts": {str(k): v for k, v in ct.items()},
             "dezenas": item["dezenas"],
-            "atraso": atraso
+            "atraso": atrasos_dict[11], # atraso geral (do último 11+)
+            "atrasos": {str(k): v for k, v in atrasos_dict.items()}
         })
 
     # Reordenar por score
