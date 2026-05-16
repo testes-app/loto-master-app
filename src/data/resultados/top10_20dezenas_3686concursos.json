@@ -30,7 +30,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 4,
+            "14": 32,
+            "15": 95
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 120284,
@@ -63,7 +74,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 1,
+            "15": 123
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 120096,
@@ -96,7 +118,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 0,
+            "15": 2
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 119984,
@@ -129,7 +162,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 29,
+            "15": 32
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 119481,
@@ -162,7 +206,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 1,
+            "14": 37,
+            "15": 100
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 119246,
@@ -195,7 +250,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 2,
+            "15": 123
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 118430,
@@ -228,7 +294,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 23,
+            "15": 368
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 118216,
@@ -261,7 +338,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 2,
+            "14": 4,
+            "15": 149
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 117748,
@@ -294,7 +382,18 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 23,
+            "15": 75
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     },
     {
         "score": 117535,
@@ -327,6 +426,17 @@
             24,
             25
         ],
+<<<<<<< HEAD
         "atraso": 0
+=======
+        "atraso": 0,
+        "atrasos": {
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 23,
+            "15": 103
+        }
+>>>>>>> df4584d (update: rankings atualizados até o concurso 3686)
     }
 ]
