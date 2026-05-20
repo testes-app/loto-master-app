@@ -155,7 +155,7 @@ const LotofacilAPI = {
     const concursosParaTentar = [contest, contest - 1, contest - 2];
 
     for (const num of concursosParaTentar) {
-      const cacheKey = `ranking_v2_${dezenas}_${num}`;
+      const cacheKey = `ranking_v3_${dezenas}_${num}`;
       try {
         // Verificar cache
         const cached = await AsyncStorage.getItem(cacheKey);
@@ -165,7 +165,7 @@ const LotofacilAPI = {
         }
 
         // Buscar no GitHub
-        const url = `https://raw.githubusercontent.com/testes-app/loto-master-app/master/src/data/resultados/top10_${dezenas}dezenas_${num}concursos.json`;
+        const url = `https://raw.githubusercontent.com/testes-app/loto-master-app/master/src/data/resultados/top10_${dezenas}dezenas_${num}concursos.json?t=${Date.now()}`;
         console.log(`Buscando remoto: ${url}`);
 
         const response = await axios.get(url, { timeout: 10000 });
