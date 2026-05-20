@@ -6,6 +6,7 @@ import {
     View, Text, ScrollView, TouchableOpacity,
     StyleSheet, Dimensions, StatusBar, ActivityIndicator, Alert,
 } from "react-native";
+import * as Updates from "expo-updates";
 import LotofacilAPI from "../services/LotofacilAPI";
 
 const { width: SW } = Dimensions.get("window");
@@ -308,6 +309,9 @@ export default function Elite17DZScreen() {
                 ))}
 
                 <Text style={st.footer}>{`Lotofácil Concursos 1–${concurso || "?"} · LotoMatrix Elite 17DZ`}</Text>
+                <Text style={[st.footer, { color: "#4a5568", marginTop: 4 }]}>
+                    {`Canal: ${Updates.channel || 'local/dev'} · Update ID: ${Updates.updateId ? Updates.updateId.substring(0, 8) : 'embutido'} · Tipo: ${Updates.isEmbeddedLaunch ? 'nativo' : 'OTA'}`}
+                </Text>
             </ScrollView>
         </View>
     );
