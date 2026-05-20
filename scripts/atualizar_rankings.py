@@ -134,10 +134,9 @@ def calcular_score_e_atraso(jogo_set, concursos_sorted):
         acertos = len(jogo_set & dezenas)
         if acertos >= 11:
             ct[acertos] += 1
-            # Registra atraso de cada categoria individualmente
-            for cat in range(11, acertos + 1):
-                if atraso_por_cat[cat] is None:
-                    atraso_por_cat[cat] = i
+            # Registra atraso de cada categoria individualmente (pontuação exata)
+            if acertos in atraso_por_cat and atraso_por_cat[acertos] is None:
+                atraso_por_cat[acertos] = i
 
     # Converter None para 9999 (nunca aconteceu)
     atraso_final = {}

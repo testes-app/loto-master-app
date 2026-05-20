@@ -211,7 +211,7 @@ export default function Elite17DZScreen() {
                     e12: meuJogoData.counts["12"] || 0,
                     e11: meuJogoData.counts["11"] || 0,
                     atraso: meuJogoData.atraso ?? 0,
-                    atrasos: meuJogoData.atrasos || {},
+                    atrasos: meuJogoData.atrasos ?? null,
                 });
 
                 // 5. Calcular rank por categoria

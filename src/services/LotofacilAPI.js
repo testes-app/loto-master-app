@@ -175,7 +175,8 @@ const LotofacilAPI = {
             score: item.score,
             counts: item.counts,
             dezenas: item.dezenas,
-            atraso: item.atraso || 0
+            atraso: item.atraso || 0,
+            atrasos: item.atrasos || {}
           }));
           await AsyncStorage.setItem(cacheKey, JSON.stringify(formatados));
           console.log(`Ranking encontrado no concurso ${num}`);
