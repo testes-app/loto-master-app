@@ -2,8 +2,10 @@ name: Auto Update Rankings
 
 on:
   schedule:
-    # Runs at 21:30 BRT (00:30 UTC) every day
-    - cron: "30 0 * * *"
+    # 1ª tentativa: 22:00 BRT (01:00 UTC)
+    - cron: "0 1 * * *"
+    # 2ª tentativa: 23:00 BRT (02:00 UTC)
+    - cron: "0 2 * * *"
   workflow_dispatch: # Allows manual trigger
 
 jobs:
